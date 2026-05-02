@@ -1,0 +1,61 @@
+.main {
+    background-color: #0f172a;
+    color: white;
+}
+
+.stApp {
+    background-color: #0f172a;
+}
+
+.job-card {
+    background-color: #1e293b;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #334155;
+}
+
+.job-title {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.company-name {
+    color: #cbd5e1;
+    font-size: 16px;
+}
+
+.match-score {
+    color: #22c55e;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.skill-badge {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.apply-button {
+    display: inline-block;
+    background-color: #22c55e;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.section-title {
+    color: white;
+    font-size: 34px;
+    font-weight: bold;
+}

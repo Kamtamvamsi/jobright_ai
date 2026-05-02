@@ -3,33 +3,77 @@ import json
 from app.embeddings import get_embedding
 from app.vector_store import VectorStore
 
-# Create vector database
+# =========================================
+# Vector Database
+# =========================================
+
 vector_db = VectorStore()
+
+# =========================================
+# Build/Rebuild FAISS
+# =========================================
 
 def load_jobs():
 
-    with open("data/jobs.json", "r") as file:
+    print("Loading jobs into FAISS...")
+
+    # Reset FAISS
+    vector_db.reset()
+
+    with open(
+        "data/jobs.json",
+        "r",
+        encoding="utf-8"
+    ) as file:
+
         jobs = json.load(file)
 
     embeddings = []
 
+    metadata = []
+
+    # Safety limit
+    jobs = jobs[:100]
+
     for job in jobs:
 
-        # Convert description into vector
-        embedding = get_embedding(job["description"])
+        combined_text = f"""
+        {job['title']}
+        {job['description']}
+        """
 
-        embeddings.append(embedding)
+        embedding = get_embedding(
+            combined_text
+        )
 
-    # Store embeddings
-    vector_db.add_embeddings(embeddings, jobs)
+        embeddings.append(
+            embedding
+        )
+
+        metadata.append(job)
+
+    vector_db.add_embeddings(
+        embeddings,
+        metadata
+    )
+
+    print(
+        f"FAISS rebuilt with {len(jobs)} jobs"
+    )
+
+# =========================================
+# Retrieve Jobs
+# =========================================
 
 def retrieve_jobs(resume_text):
 
-    # Convert resume into vector
-    resume_embedding = get_embedding(resume_text)
+    resume_embedding = get_embedding(
+        resume_text
+    )
 
-    # Find top matching jobs
-    results = vector_db.search(resume_embedding)
+    results = vector_db.search(
+        resume_embedding,
+        top_k=5
+    )
 
     return results
-

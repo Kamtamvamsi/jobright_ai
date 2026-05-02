@@ -2,38 +2,109 @@ from openai import OpenAI
 
 from app.config import OPENAI_API_KEY
 
-client = OpenAI(api_key=OPENAI_API_KEY)
+# =========================================
+# OpenAI Client
+# =========================================
 
-def generate_reasoning(resume, job):
+client = OpenAI(
+    api_key=OPENAI_API_KEY
+)
 
-    prompt = f"""
-    You are an AI hiring assistant.
+# =========================================
+# Generate AI Reasoning
+# =========================================
 
-    Resume:
-    {resume}
+def generate_reasoning(
+    resume,
+    job
+):
 
-    Job Description:
-    {job['description']}
+    try:
 
-    Explain why this candidate is a strong fit.
+        prompt = f"""
+        You are an expert AI recruiter and hiring assistant.
 
-    Include:
-    - Relevant skills
-    - Technical alignment
-    - Project relevance
+        Analyze the candidate resume
+        against the retrieved job role.
 
-    Keep response professional.
-    """
+        ============================
+        CANDIDATE RESUME
+        ============================
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        {resume[:3000]}
 
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
+        ============================
+        JOB DETAILS
+        ============================
 
-    return response.choices[0].message.content
+        Job Title:
+        {job.get('title', '')}
+
+        Company:
+        {job.get('company', '')}
+
+        Location:
+        {job.get('location', '')}
+
+        ============================
+        JOB DESCRIPTION
+        ============================
+
+        {job.get('description', '')[:2500]}
+
+        ============================
+        TASK
+        ============================
+
+        Explain:
+
+        1. Why the candidate matches this role
+        2. Relevant technical skills
+        3. Relevant tools/frameworks
+        4. Experience/project alignment
+        5. Overall suitability
+
+        RULES:
+        - Keep response concise
+        - Keep response professional
+        - Use recruiter-style language
+        - Maximum 120 words
+        - Avoid bullet points
+        """
+
+        response = client.chat.completions.create(
+
+            model="gpt-4o-mini",
+
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a professional AI hiring assistant."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+
+            temperature=0.4,
+
+            max_tokens=180
+        )
+
+        reasoning = (
+            response
+            .choices[0]
+            .message
+            .content
+        )
+
+        return reasoning
+
+    except Exception as e:
+
+        return (
+            f"AI reasoning error: {str(e)}"
+        )

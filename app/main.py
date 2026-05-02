@@ -1,8 +1,142 @@
+# from fastapi import FastAPI
+# from pydantic import BaseModel
+
+# from app.scraper import scrape_all_jobs
+# from app.rag_pipeline import load_jobs, retrieve_jobs
+# from app.llm_reasoning import generate_reasoning
+
+
+# from app.job_refresher import (
+#     start_scheduler
+# )
+
+# # =========================================
+# # FastAPI App
+# # =========================================
+
+# app = FastAPI()
+
+# # =========================================
+# # Fetch Real Jobs
+# # =========================================
+
+# print("Fetching latest jobs...")
+
+# scrape_all_jobs()
+
+# # =========================================
+# # Load/Create FAISS Database
+# # =========================================
+
+# print("Loading FAISS vector database...")
+
+# load_jobs()
+
+# # =========================================
+# # Request Model
+# # =========================================
+
+# class ResumeRequest(BaseModel):
+
+#     resume: str
+
+# # =========================================
+# # Root Route
+# # =========================================
+
+# @app.get("/")
+# def home():
+
+#     return {
+#         "message": "Mini Jobright AI Running Successfully"
+#     }
+
+# # =========================================
+# # Match Route
+# # =========================================
+
+# @app.post("/match")
+# def match_jobs(request: ResumeRequest):
+
+#     try:
+
+#         # Retrieve matching jobs
+#         results = retrieve_jobs(
+#             request.resume
+#         )
+
+#         matches = []
+
+#         for item in results:
+
+#             job = item["job"]
+
+#             score = item["score"]
+
+#             # Generate reasoning
+#             reasoning = generate_reasoning(
+#                 request.resume,
+#                 job
+#             )
+
+#             matches.append({
+#                 "job_title": job.get("title", "N/A"),
+
+#                 "company": job.get(
+#                     "company",
+#                     "N/A"
+#                 ),
+
+#                 "location": job.get(
+#                     "location",
+#                     "Remote"
+#                 ),
+
+#                 "source": job.get(
+#                     "source",
+#                     "Unknown"
+#                 ),
+
+#                 "job_url": job.get(
+#                     "url",
+#                     ""
+#                 ),
+
+#                 "match_percentage": score,
+
+#                 "reasoning": reasoning
+#             })
+
+#         return {
+#             "success": True,
+#             "total_matches": len(matches),
+#             "matches": matches
+#         }
+
+#     except Exception as e:
+
+#         return {
+#             "success": False,
+#             "error": str(e)
+#         }
+
+
+
+
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
-import numpy as np
-import faiss
+
+from app.scraper import scrape_all_jobs
+from app.rag_pipeline import (
+    load_jobs,
+    retrieve_jobs
+)
+from app.llm_reasoning import (
+    generate_reasoning
+)
+from app.job_refresher import (
+    start_scheduler
+)
 
 # =========================================
 # FastAPI App
@@ -11,135 +145,36 @@ import faiss
 app = FastAPI()
 
 # =========================================
-# Load Embedding Model
+# Initial Job Scraping
 # =========================================
 
-print("Loading embedding model...")
+print("\nFetching latest jobs...")
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
-print("Model loaded successfully!")
+scrape_all_jobs()
 
 # =========================================
-# Sample Jobs Dataset
+# Build Initial FAISS Database
 # =========================================
 
-jobs = [
-    {
-        "title": "AI Engineer",
-        "description": "Python Machine Learning Deep Learning LangChain OpenAI FastAPI Vector Database"
-    },
-    {
-        "title": "Backend Developer",
-        "description": "FastAPI REST API Python SQL Backend Development"
-    },
-    {
-        "title": "Machine Learning Engineer",
-        "description": "TensorFlow PyTorch Machine Learning NLP Embeddings AI"
-    },
-    {
-        "title": "Frontend Developer",
-        "description": "React JavaScript HTML CSS Frontend UI"
-    },
-    {
-        "title": "Data Scientist",
-        "description": "Python Pandas NumPy Data Analysis Machine Learning"
-    }
-]
+print("\nBuilding FAISS database...")
+
+load_jobs()
 
 # =========================================
-# Create Job Embeddings
+# Start Background Scheduler
 # =========================================
 
-job_texts = [job["description"] for job in jobs]
+print("\nStarting job refresh scheduler...")
 
-job_embeddings = model.encode(job_texts)
-
-job_embeddings = np.array(job_embeddings).astype("float32")
-
-# =========================================
-# Create FAISS Index
-# =========================================
-
-dimension = job_embeddings.shape[1]
-
-index = faiss.IndexFlatL2(dimension)
-
-index.add(job_embeddings)
-
-print("FAISS index created!")
+start_scheduler()
 
 # =========================================
 # Request Model
 # =========================================
 
 class ResumeRequest(BaseModel):
+
     resume: str
-
-# =========================================
-# Job Matching Function
-# =========================================
-
-def retrieve_jobs(resume_text):
-
-    # Create resume embedding
-    resume_embedding = model.encode([resume_text])
-
-    resume_embedding = np.array(resume_embedding).astype("float32")
-
-    # Search similar jobs
-    distances, indices = index.search(resume_embedding, 3)
-
-    matched_jobs = []
-
-    for i, idx in enumerate(indices[0]):
-
-        job = jobs[idx]
-
-        similarity_score = round((1 / (1 + distances[0][i])) * 100, 2)
-
-        reason = generate_reason(job["title"], resume_text)
-
-        matched_jobs.append({
-            "job_title": job["title"],
-            "match_percentage": similarity_score,
-            "reason": reason
-        })
-
-    return matched_jobs
-
-# =========================================
-# Simple Reason Generator
-# =========================================
-
-def generate_reason(job_title, resume):
-
-    resume = resume.lower()
-
-    reasons = []
-
-    if "python" in resume:
-        reasons.append("Python")
-
-    if "fastapi" in resume:
-        reasons.append("FastAPI")
-
-    if "machine learning" in resume:
-        reasons.append("Machine Learning")
-
-    if "langchain" in resume:
-        reasons.append("LangChain")
-
-    if "react" in resume:
-        reasons.append("React")
-
-    if "sql" in resume:
-        reasons.append("SQL")
-
-    if len(reasons) == 0:
-        return f"Basic skills matched for {job_title}"
-
-    return f"Matched because of skills in: {', '.join(reasons)}"
 
 # =========================================
 # Root Route
@@ -147,8 +182,11 @@ def generate_reason(job_title, resume):
 
 @app.get("/")
 def home():
+
     return {
-        "message": "Mini Jobright AI Backend Running"
+        "message": (
+            "Mini Jobright AI Running Successfully"
+        )
     }
 
 # =========================================
@@ -156,20 +194,107 @@ def home():
 # =========================================
 
 @app.post("/match")
-def match_jobs(request: ResumeRequest):
+def match_jobs(
+    request: ResumeRequest
+):
 
     try:
 
-        matched_jobs = retrieve_jobs(request.resume)
+        # =====================================
+        # Retrieve Matching Jobs
+        # =====================================
+
+        results = retrieve_jobs(
+            request.resume
+        )
+
+        matches = []
+
+        # =====================================
+        # Generate AI Reasoning
+        # =====================================
+
+        for item in results:
+
+            job = item["job"]
+
+            score = item["score"]
+
+            reasoning = generate_reasoning(
+                request.resume,
+                job
+            )
+
+            print("\n====================")
+            print(
+                f"MATCHED JOB: "
+                f"{job.get('title')}"
+            )
+            print(
+                f"SCORE: {score}%"
+            )
+            print(
+                f"COMPANY: "
+                f"{job.get('company')}"
+            )
+            print("====================")
+
+            matches.append({
+
+                "job_title": job.get(
+                    "title",
+                    "N/A"
+                ),
+
+                "company": job.get(
+                    "company",
+                    "N/A"
+                ),
+
+                "location": job.get(
+                    "location",
+                    "Remote"
+                ),
+
+                "source": job.get(
+                    "source",
+                    "Unknown"
+                ),
+
+                "job_url": job.get(
+                    "url",
+                    ""
+                ),
+
+                "match_percentage": score,
+
+                "reasoning": reasoning
+            })
+
+        # =====================================
+        # Return Response
+        # =====================================
 
         return {
+
             "success": True,
-            "matches": matched_jobs
+
+            "total_matches": len(
+                matches
+            ),
+
+            "matches": matches
         }
 
     except Exception as e:
 
+        print(
+            f"\nERROR: {str(e)}"
+        )
+
         return {
+
             "success": False,
+
             "error": str(e)
         }
