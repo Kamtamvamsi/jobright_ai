@@ -1,0 +1,19 @@
+[
+    {
+        "title": "AI Engineer",
+        "description": "Build RAG systems, LLM agents, FastAPI backends, and optimize AI workflows.",
+        "skills": ["Python", "FastAPI", "LLM", "RAG"]
+    },
+
+    {
+        "title": "Machine Learning Engineer",
+        "description": "Develop ML pipelines, deploy models with Docker, and monitor performance.",
+        "skills": ["Python", "TensorFlow", "Docker"]
+    },
+
+    {
+        "title": "Backend AI Developer",
+        "description": "Create scalable backend APIs for AI systems using FastAPI and vector databases.",
+        "skills": ["FastAPI", "FAISS", "Python"]
+    }
+]
