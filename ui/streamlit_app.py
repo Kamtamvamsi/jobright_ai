@@ -72,6 +72,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================
+# Backend URL
+# =========================================
+
+API_URL = (
+    "https://mini-jobright-ai-production.up.railway.app/match"
+)
+
+# =========================================
 # Header
 # =========================================
 
@@ -139,34 +147,117 @@ if st.button("🔍 Match Jobs"):
             with st.spinner(
                 "Finding best jobs..."
             ):
-                #"http://localhost:8000/match"
+
                 response = requests.post(
-                    "https://mini-jobright-ai-production.up.railway.app/match",
+                    API_URL,
                     json={
                         "resume": resume_text
                     },
-                    timeout=180
+                    timeout=300
                 )
 
-                data = response.json()
+                # =====================================
+                # Debug Response
+                # =====================================
 
-                if data["success"]:
+                st.write(
+                    "Status Code:",
+                    response.status_code
+                )
+
+                # =====================================
+                # Safe JSON Parsing
+                # =====================================
+
+                try:
+
+                    data = response.json()
+
+                except Exception:
+
+                    st.error(
+                        "Backend returned invalid JSON response"
+                    )
+
+                    st.text(response.text)
+
+                    st.stop()
+
+                # =====================================
+                # Show Raw Response
+                # =====================================
+
+                st.write("Backend Response:")
+
+                st.json(data)
+
+                # =====================================
+                # Safe Success Check
+                # =====================================
+
+                if data.get("success"):
 
                     st.subheader(
                         "🎯 Top Matching Jobs"
                     )
 
-                    for match in data["matches"]:
+                    matches = data.get(
+                        "matches",
+                        []
+                    )
+
+                    if len(matches) == 0:
+
+                        st.warning(
+                            "No matching jobs found."
+                        )
+
+                    for match in matches:
+
+                        # =====================================
+                        # Safe Field Extraction
+                        # =====================================
+
+                        job_title = match.get(
+                            "job_title",
+                            "Unknown"
+                        )
+
+                        company = match.get(
+                            "company",
+                            "Unknown"
+                        )
+
+                        score = match.get(
+                            "match_percentage",
+                            0
+                        )
+
+                        reasoning = match.get(
+                            "reasoning",
+                            "No reasoning available"
+                        )
+
+                        location = match.get(
+                            "location",
+                            "Remote"
+                        )
+
+                        source = match.get(
+                            "source",
+                            "Unknown"
+                        )
+
+                        job_url = match.get(
+                            "job_url",
+                            ""
+                        )
 
                         # =====================================
                         # Skill Extraction
                         # =====================================
 
                         skills = []
-
-                        reasoning = (
-                            match["reasoning"]
-                        ).lower()
 
                         tech_keywords = [
                             "python",
@@ -181,9 +272,13 @@ if st.button("🔍 Match Jobs"):
                             "langchain"
                         ]
 
+                        lower_reasoning = (
+                            reasoning.lower()
+                        )
+
                         for tech in tech_keywords:
 
-                            if tech in reasoning:
+                            if tech in lower_reasoning:
 
                                 skills.append(
                                     tech.title()
@@ -200,28 +295,30 @@ if st.button("🔍 Match Jobs"):
                                 unsafe_allow_html=True
                             )
 
-                            st.subheader(
-                                match["job_title"]
+                            st.subheader(job_title)
+
+                            st.write(
+                                f"🏢 Company: {company}"
                             )
 
                             st.write(
-                                f"🏢 Company: {match['company']}"
+                                f"🎯 Match Score: {score}%"
                             )
 
-                            st.write(
-                                f"🎯 Match Score: {match['match_percentage']}%"
-                            )
+                            try:
 
-                            # Progress bar
-                            st.progress(
-                                int(
-                                    match[
-                                        "match_percentage"
-                                    ]
+                                st.progress(
+                                    int(score)
                                 )
-                            )
 
-                            # Skill badges
+                            except:
+
+                                st.progress(0)
+
+                            # =====================================
+                            # Skill Badges
+                            # =====================================
+
                             badge_html = ""
 
                             for skill in skills:
@@ -239,29 +336,33 @@ if st.button("🔍 Match Jobs"):
 
                             st.write("")
 
-                            # AI reasoning
+                            # =====================================
+                            # AI Analysis
+                            # =====================================
+
                             with st.expander(
                                 "🧠 View AI Analysis"
                             ):
 
+                                st.write(reasoning)
+
                                 st.write(
-                                    match["reasoning"]
+                                    f"📍 Location: {location}"
                                 )
 
                                 st.write(
-                                    f"📍 Location: {match['location']}"
+                                    f"🌐 Source: {source}"
                                 )
 
-                                st.write(
-                                    f"🌐 Source: {match['source']}"
-                                )
+                            # =====================================
+                            # Apply Button
+                            # =====================================
 
-                            # Apply button
-                            if match["job_url"]:
+                            if job_url:
 
                                 st.markdown(
                                     f"""
-                                    <a href="{match['job_url']}"
+                                    <a href="{job_url}"
                                     target="_blank"
                                     class="apply-btn">
                                     Apply Now
@@ -280,11 +381,26 @@ if st.button("🔍 Match Jobs"):
                 else:
 
                     st.error(
-                        data["error"]
+                        data.get(
+                            "error",
+                            "Unknown backend error"
+                        )
                     )
+
+        except requests.exceptions.Timeout:
+
+            st.error(
+                "Request timeout. Backend is taking too long."
+            )
+
+        except requests.exceptions.ConnectionError:
+
+            st.error(
+                "Could not connect to backend server."
+            )
 
         except Exception as e:
 
             st.error(
-                f"Connection Error: {str(e)}"
+                f"Frontend Error: {str(e)}"
             )
