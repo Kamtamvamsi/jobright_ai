@@ -20,7 +20,7 @@ print("FASTAPI SERVER STARTED")
 # FastAPI App
 # =========================================
 
-#app = FastAPI()
+app = FastAPI()
 
 # =========================================
 # Initial Job Scraping
