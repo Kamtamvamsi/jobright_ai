@@ -72,14 +72,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================
-# Backend URL
-# =========================================
-
-API_URL = (
-    "https://mini-jobright-ai-production.up.railway.app/match"
-)
-
-# =========================================
 # Header
 # =========================================
 
@@ -149,62 +141,57 @@ if st.button("🔍 Match Jobs"):
             ):
 
                 response = requests.post(
-                    API_URL,
+                    "http://localhost:8000/match",
                     json={
                         "resume": resume_text
                     },
-                    timeout=60
+                    timeout=180
                 )
 
-                st.write(
-                    "Status Code:",
-                    response.status_code
-                )
+                data = response.json()
 
-                # =====================================
-                # Safe JSON Parse
-                # =====================================
+                if data["success"]:
 
-                try:
-
-                    data = response.json()
-
-                except Exception:
-
-                    st.error(
-                        "Backend returned invalid response"
+                    st.subheader(
+                        "🎯 Top Matching Jobs"
                     )
 
-                    st.text(
-                        response.text
-                    )
+                    for match in data["matches"]:
 
-                    st.stop()
+                        # =====================================
+                        # Skill Extraction
+                        # =====================================
 
-                # =====================================
-                # Show Backend Response
-                # =====================================
+                        skills = []
 
-                st.write("Backend Response:")
+                        reasoning = (
+                            match["reasoning"]
+                        ).lower()
 
-                st.json(data)
+                        tech_keywords = [
+                            "python",
+                            "fastapi",
+                            "machine learning",
+                            "tensorflow",
+                            "pytorch",
+                            "react",
+                            "sql",
+                            "nlp",
+                            "openai",
+                            "langchain"
+                        ]
 
-                # =====================================
-                # Handle Success
-                # =====================================
+                        for tech in tech_keywords:
 
-                if data.get("success"):
+                            if tech in reasoning:
 
-                    st.success(
-                        "Jobs matched successfully!"
-                    )
+                                skills.append(
+                                    tech.title()
+                                )
 
-                    matches = data.get(
-                        "matches",
-                        []
-                    )
-
-                    for match in matches:
+                        # =====================================
+                        # Job Card
+                        # =====================================
 
                         with st.container():
 
@@ -214,53 +201,67 @@ if st.button("🔍 Match Jobs"):
                             )
 
                             st.subheader(
-                                match.get(
-                                    "job_title",
-                                    "Unknown"
-                                )
+                                match["job_title"]
                             )
 
                             st.write(
-                                f"🏢 Company: "
-                                f"{match.get('company')}"
+                                f"🏢 Company: {match['company']}"
                             )
 
                             st.write(
-                                f"📍 Location: "
-                                f"{match.get('location')}"
+                                f"🎯 Match Score: {match['match_percentage']}%"
                             )
 
-                            st.write(
-                                f"🎯 Match Score: "
-                                f"{match.get('match_percentage')}%"
-                            )
-
+                            # Progress bar
                             st.progress(
                                 int(
-                                    match.get(
-                                        "match_percentage",
-                                        0
-                                    )
+                                    match[
+                                        "match_percentage"
+                                    ]
                                 )
                             )
 
+                            # Skill badges
+                            badge_html = ""
+
+                            for skill in skills:
+
+                                badge_html += f"""
+                                <span class="skill-badge">
+                                    {skill}
+                                </span>
+                                """
+
+                            st.markdown(
+                                badge_html,
+                                unsafe_allow_html=True
+                            )
+
+                            st.write("")
+
+                            # AI reasoning
                             with st.expander(
                                 "🧠 View AI Analysis"
                             ):
 
                                 st.write(
-                                    match.get(
-                                        "reasoning"
-                                    )
+                                    match["reasoning"]
                                 )
 
-                            if match.get(
-                                "job_url"
-                            ):
+                                st.write(
+                                    f"📍 Location: {match['location']}"
+                                )
+
+                                st.write(
+                                    f"🌐 Source: {match['source']}"
+                                )
+
+                            # Apply button
+                            if match["job_url"]:
 
                                 st.markdown(
                                     f"""
-                                    <a href="{match.get('job_url')}"
+                                    <a href="{match['job_url']}"
                                     target="_blank"
                                     class="apply-btn">
                                     Apply Now
@@ -279,26 +280,11 @@ if st.button("🔍 Match Jobs"):
                 else:
 
                     st.error(
-                        data.get(
-                            "error",
-                            "Unknown backend error"
-                        )
+                        data["error"]
                     )
-
-        except requests.exceptions.Timeout:
-
-            st.error(
-                "Request timeout from backend"
-            )
-
-        except requests.exceptions.ConnectionError:
-
-            st.error(
-                "Could not connect to backend"
-            )
 
         except Exception as e:
 
             st.error(
-                f"Frontend Error: {str(e)}"
+                f"Connection Error: {str(e)}"
             )
