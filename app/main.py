@@ -14,6 +14,8 @@ from app.job_refresher import (
     start_scheduler
 )
 
+print("FASTAPI SERVER STARTED")
+
 # =========================================
 # FastAPI App
 # =========================================
