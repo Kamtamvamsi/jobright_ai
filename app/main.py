@@ -297,107 +297,54 @@ def match_jobs(request: ResumeRequest):
 
     try:
 
-        print("\n========================")
         print("MATCH REQUEST RECEIVED")
-        print("========================")
-
-        print("Resume Length:", len(request.resume))
 
         # =====================================
-        # Load jobs if needed
+        # TEMP STATIC RESULTS
         # =====================================
 
-        global faiss_ready
+        matches = [
 
-        if not faiss_ready:
+            {
+                "job_title": "Python AI Engineer",
 
-            print("Loading jobs and FAISS...")
+                "company": "OpenAI",
 
-            scrape_all_jobs()
+                "location": "Remote",
 
-            load_jobs()
+                "source": "Demo",
 
-            faiss_ready = True
+                "job_url": "https://openai.com/careers",
 
-        # =====================================
-        # Retrieve Matching Jobs
-        # =====================================
+                "match_percentage": 96,
 
-        print("Retrieving jobs...")
-
-        results = retrieve_jobs(request.resume)
-
-        print("Retrieved Results:", results)
-
-        matches = []
-
-        # =====================================
-        # Process Results
-        # =====================================
-
-        for item in results:
-
-            try:
-
-                job = item.get("job", {})
-
-                score = item.get("score", 0)
-
-                print("Processing Job:", job)
-
-                try:
-
-                    reasoning = generate_reasoning(
-                        request.resume,
-                        job
-                    )
-
-                except Exception as reason_error:
-
-                    print("Reasoning Error:", str(reason_error))
-
-                    reasoning = "AI reasoning unavailable"
-
-                matches.append({
-
-                    "job_title": job.get(
-                        "title",
-                        "Unknown"
-                    ),
-
-                    "company": job.get(
-                        "company",
-                        "Unknown"
-                    ),
-
-                    "location": job.get(
-                        "location",
-                        "Remote"
-                    ),
-
-                    "source": job.get(
-                        "source",
-                        "Unknown"
-                    ),
-
-                    "job_url": job.get(
-                        "url",
-                        ""
-                    ),
-
-                    "match_percentage": score,
-
-                    "reasoning": reasoning
-                })
-
-            except Exception as item_error:
-
-                print(
-                    "ITEM PROCESSING ERROR:",
-                    str(item_error)
+                "reasoning": (
+                    "Your resume strongly matches "
+                    "Python, FastAPI, AI, "
+                    "machine learning, and NLP skills."
                 )
+            },
 
-        print("Final Matches:", matches)
+            {
+                "job_title": "Machine Learning Developer",
+
+                "company": "Google",
+
+                "location": "Remote",
+
+                "source": "Demo",
+
+                "job_url": "https://careers.google.com",
+
+                "match_percentage": 91,
+
+                "reasoning": (
+                    "Your background aligns with "
+                    "AI engineering and backend "
+                    "development requirements."
+                )
+            }
+        ]
 
         return {
 
@@ -413,8 +360,6 @@ def match_jobs(request: ResumeRequest):
         import traceback
 
         traceback.print_exc()
-
-        print("MATCH API ERROR:", str(e))
 
         return {
 
