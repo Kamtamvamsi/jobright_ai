@@ -139,9 +139,9 @@ if st.button("🔍 Match Jobs"):
             with st.spinner(
                 "Finding best jobs..."
             ):
-
+                #"http://localhost:8000/match"
                 response = requests.post(
-                    "http://localhost:8000/match",
+                    "https://mini-jobright-ai-production.up.railway.app/macth",
                     json={
                         "resume": resume_text
                     },
