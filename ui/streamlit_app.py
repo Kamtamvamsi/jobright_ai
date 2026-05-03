@@ -141,7 +141,7 @@ if st.button("🔍 Match Jobs"):
             ):
                 #"http://localhost:8000/match"
                 response = requests.post(
-                    "https://mini-jobright-ai-production.up.railway.app/match",
+                    "https:/mini-jobright-ai-production.up.railway.app/match",
                     json={
                         "resume": resume_text
                     },
