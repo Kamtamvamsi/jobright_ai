@@ -1,76 +1,227 @@
 # 🚀 AI Job Matching Agent (RAG + LLM + FastAPI)
 
-An end-to-end AI system that matches resumes to relevant jobs using semantic search, Retrieval-Augmented Generation (RAG), and LLM-based reasoning — inspired by real-world platforms like Jobright.
+An end-to-end AI-powered job matching system that intelligently connects resumes with relevant job opportunities using semantic search, vector databases, Retrieval-Augmented Generation (RAG), and LLM-based reasoning — inspired by modern AI recruitment platforms like :contentReference[oaicite:0]{index=0}.
 
 ---
 
-## 🎯 Problem Statement
+# 🎯 Problem Statement
 
-Traditional job search is inefficient and keyword-based. This system demonstrates how AI can:
-- Understand candidate profiles semantically
-- Match them with relevant opportunities
-- Provide explainable reasoning for each match
+Traditional job portals rely heavily on keyword matching, often producing inaccurate or irrelevant recommendations.
 
----
+This project demonstrates how AI can improve hiring by:
 
-## ⚡ Key Features
-
-✔ Resume → Embedding pipeline (semantic understanding)  
-✔ Vector Database (FAISS) for similarity search  
-✔ RAG-based job retrieval system  
-✔ LLM-powered reasoning: “Why this job fits”  
-✔ FastAPI backend for production-style APIs  
-✔ Modular and scalable architecture  
+- Understanding resumes semantically
+- Matching candidates with relevant jobs intelligently
+- Explaining *why* a role is a good fit
+- Creating scalable AI recruitment workflows
 
 ---
 
-## 🧠 System Architecture
-Resume Input → Embedding Model → Vector DB (FAISS) ↓ Job Dataset Embeddings ↓ Similarity Search ↓ LLM Reasoning Layer ↓ API Response (FastAPI)
+# ⚡ Key Features
+
+✅ Resume → Embedding pipeline  
+✅ Semantic job matching using FAISS  
+✅ Retrieval-Augmented Generation (RAG) workflow  
+✅ LLM-powered reasoning engine  
+✅ FastAPI production-style backend  
+✅ Streamlit interactive frontend  
+✅ Modular and scalable architecture  
+✅ Explainable AI recommendations  
 
 ---
 
-## 🧩 Tech Stack
+# 🧠 System Architecture
 
-- **Backend:** FastAPI  
-- **Embeddings:** Sentence Transformers  
-- **Vector DB:** FAISS  
-- **LLM:** OpenAI API  
-- **Language:** Python  
-- **Optional UI:** Streamlit  
+```mermaid
+flowchart TD
 
----
+    A[👤 User] --> B[🖥️ Streamlit Frontend]
 
-## 🧪 How It Works
+    B -->|Upload Resume / Enter Resume Text| C[⚡ FastAPI Backend]
 
-1. Resume text is converted into embeddings  
-2. Job descriptions are pre-embedded and stored in FAISS  
-3. Semantic similarity search retrieves top matching jobs  
-4. LLM analyzes resume + job and generates reasoning  
-5. API returns structured job matches + explanations  
+    C --> D[🧠 Embedding Generator]
 
----
+    D --> E[(📦 FAISS Vector Database)]
 
-## 📊 Example Output
+    F[(📄 Job Dataset CSV/JSON)] --> E
 
-**Input:** Resume with Python, ML, API development  
+    E --> G[🔍 Similarity Search Engine]
 
-**Output:**
+    G --> H[🤖 LLM Reasoning Layer]
 
+    H --> I[📊 Ranked Job Matches + Explanations]
 
-Job: AI Engineer
-Reason:
-Strong alignment with Python and ML experience
-Experience with APIs fits backend AI systems
-Exposure to AI workflows matches role requirements
+    I --> C
+
+    C --> B
+
+    B --> J[✅ Recommended Jobs Display]
+
+```
 
 ---
 
-## 🛠️ Setup Instructions
+# 🔧 Component Overview
+
+| Component | Description |
+|---|---|
+| Streamlit Frontend | User interface for uploading resumes and viewing job recommendations |
+| FastAPI Backend | Handles APIs, embedding generation, and AI workflows |
+| Embedding Generator | Converts resumes and jobs into semantic vectors |
+| FAISS Vector DB | Stores embeddings for high-speed similarity search |
+| Job Dataset | Collection of job descriptions used for retrieval |
+| Similarity Search Engine | Finds semantically relevant jobs |
+| LLM Reasoning Layer | Explains why the candidate matches the role |
+
+---
+
+# 🔄 End-to-End Workflow
+
+```mermaid
+sequenceDiagram
+
+    participant U as User
+    participant S as Streamlit UI
+    participant F as FastAPI Backend
+    participant E as Embedding Model
+    participant V as FAISS DB
+    participant L as LLM Layer
+
+    U->>S: Upload Resume
+    S->>F: Send Resume Text
+    F->>E: Generate Resume Embedding
+    E-->>F: Vector Representation
+    F->>V: Similarity Search
+    V-->>F: Top Matching Jobs
+    F->>L: Resume + Retrieved Jobs
+    L-->>F: AI Match Reasoning
+    F-->>S: Ranked Results + Explanations
+    S-->>U: Display Recommendations
+
+```
+
+---
+
+# 🧠 AI Workflow
+
+```mermaid
+graph TD
+
+    A[Resume Text] --> B[Text Preprocessing]
+
+    B --> C[Embedding Generation]
+
+    C --> D[Vector Representation]
+
+    D --> E[FAISS Similarity Search]
+
+    E --> F[Top Relevant Jobs]
+
+    F --> G[RAG Context Creation]
+
+    G --> H[LLM Reasoning Engine]
+
+    H --> I[Ranked Job Recommendations]
+
+```
+
+---
+
+# 🧩 Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Core programming language |
+| FastAPI | Backend API framework |
+| Streamlit | Frontend interface |
+| Sentence Transformers | Embedding generation |
+| FAISS | Vector similarity search |
+| OpenAI API | LLM reasoning |
+| Pandas / NumPy | Data processing |
+
+---
+
+# 📊 Example Output
+
+### 📥 Input Resume
+
+> Python developer with machine learning experience, API development skills, and knowledge of AI workflows.
+
+---
+
+### 📤 AI Response
+
+#### 🧑‍💼 Job Match: AI Engineer
+
+**Why This Role Fits**
+- Strong alignment with Python and Machine Learning experience
+- Backend API knowledge matches AI infrastructure requirements
+- Familiarity with AI workflows improves role compatibility
+
+---
+
+# 📁 Project Structure
 
 ```bash
-# Setup Instructions
+Mini_jobright/
+│
+├── backend/
+│   ├── main.py
+│   ├── embeddings.py
+│   ├── faiss_index.py
+│   ├── rag_pipeline.py
+│   ├── llm_reasoning.py
+│   ├── requirements.txt
+│   │
+│   └── jobs/
+│       └── jobs.json
+│
+├── ui/
+│   ├── streamlit_app.py
+│   └── requirements.txt
+│
+├── README.md
+├── .gitignore
+├── docker-compose.yml
+└── requirements.txt
+```
 
-## 1. Clone the Repository
+---
+
+# 🚀 Deployment Architecture
+
+```mermaid
+flowchart LR
+
+    A[👤 User Browser]
+
+    B[🌐 Streamlit Frontend]
+
+    C[⚡ FastAPI API Server]
+
+    D[(📦 FAISS Vector Index)]
+
+    E[(📄 Job Dataset)]
+
+    F[🤖 OpenAI API]
+
+    A --> B
+
+    B --> C
+
+    C --> D
+
+    E --> D
+
+    C --> F
+
+```
+
+---
+
+# 🛠️ Setup Instructions
+
+## 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/Mini_jobright.git
@@ -80,7 +231,7 @@ cd Mini_jobright
 
 ---
 
-## 2. Create Virtual Environment
+## 2️⃣ Create Virtual Environment
 
 ### Windows
 
@@ -100,7 +251,7 @@ source venv/bin/activate
 
 ---
 
-## 3. Install Dependencies
+## 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -108,7 +259,7 @@ pip install -r requirements.txt
 
 ---
 
-# Run the Project
+# ▶️ Run The Project
 
 ## Start FastAPI Backend
 
@@ -126,7 +277,7 @@ http://127.0.0.1:8000
 
 ## Start Streamlit Frontend
 
-Open a new terminal and run:
+Open another terminal:
 
 ```bash
 streamlit run ui/streamlit_app.py
@@ -140,50 +291,65 @@ http://localhost:8501
 
 ---
 
-# Project Workflow
+# 🔍 How The System Works
 
-1. User enters resume text
-2. Backend converts resume into embeddings
-3. FAISS performs vector similarity search
-4. System finds best matching jobs
-5. AI returns matching score and fit explanation
-
----
-
-# Technologies Used
-
-* Python
-* FastAPI
-* Streamlit
-* Sentence Transformers
-* FAISS
-* Pandas
-* NumPy
+1. User submits resume text
+2. Resume is converted into semantic embeddings
+3. FAISS retrieves top similar jobs
+4. RAG pipeline prepares contextual information
+5. LLM generates intelligent reasoning
+6. API returns ranked recommendations
 
 ---
 
-# Current Status
+# 📌 Current Project Status
 
-✅ Localhost working version completed
-
-❌ No deployment yet
-
-Currently NOT deployed on:
-
-* Render
-* Railway
-* GCP
-* AWS
-* Azure
+| Feature | Status |
+|---|---|
+| FastAPI Backend | ✅ Completed |
+| Streamlit Frontend | ✅ Completed |
+| Embedding Pipeline | ✅ Completed |
+| FAISS Search | ✅ Completed |
+| Localhost Testing | ✅ Completed |
+| Cloud Deployment | ❌ Pending |
+| Docker Deployment | ❌ Pending |
 
 ---
 
-# Future Improvements
+# 🔐 Future Improvements
 
-* Cloud Deployment
-* Docker Support
-* Authentication
-* Pinecone Integration
-* Real-time Job Scraping
-* RAG Pipeline
-* LLM-based Reasoning
+- ✅ User Authentication
+- ✅ Resume PDF Parsing
+- ✅ Real-Time Job APIs
+- ✅ Docker + Kubernetes
+- ✅ Pinecone Vector DB
+- ✅ Cloud Deployment (GCP/AWS)
+- ✅ Skill Gap Analysis
+- ✅ Resume Optimization Suggestions
+- ✅ Multi-Agent AI Workflow
+- ✅ Job Trend Analytics
+
+---
+
+# 🌟 Future Vision
+
+This project can evolve into a complete AI recruitment ecosystem featuring:
+
+- AI Recruiter Agents
+- Personalized Career Recommendations
+- Real-Time Hiring Intelligence
+- Autonomous Resume Optimization
+- Enterprise Hiring Dashboards
+
+---
+
+# 📜 License
+
+This project is developed for educational, research, and portfolio purposes.
+
+---
+
+# 👨‍💻 Author
+
+Developed by **Vamsi Kamtam**  
+AI + Full Stack + RAG Systems Enthusiast
