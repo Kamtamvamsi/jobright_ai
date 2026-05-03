@@ -20,7 +20,7 @@ print("FASTAPI SERVER STARTED")
 # FastAPI App
 # =========================================
 
-app = FastAPI()
+#app = FastAPI()
 
 # =========================================
 # Initial Job Scraping
@@ -34,17 +34,17 @@ app = FastAPI()
 # Build Initial FAISS Database
 # =========================================
 
-print("\nBuilding FAISS database...")
+#print("\nBuilding FAISS database...")
 
-load_jobs()
+#load_jobs()
 
 # =========================================
 # Start Background Scheduler
 # =========================================
 
-print("\nStarting job refresh scheduler...")
+#print("\nStarting job refresh scheduler...")
 
-start_scheduler()
+#start_scheduler()
 
 # =========================================
 # Request Model
