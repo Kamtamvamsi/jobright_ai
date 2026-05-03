@@ -188,33 +188,16 @@
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-import traceback
-
-from app.scraper import scrape_all_jobs
-from app.rag_pipeline import (
-    load_jobs,
-    retrieve_jobs
-)
-from app.llm_reasoning import (
-    generate_reasoning
-)
 
 # =========================================
 # FastAPI App
 # =========================================
 
 app = FastAPI(
-    title="Mini Jobright AI",
-    version="1.0.0"
+    title="Mini Jobright AI"
 )
 
 print("FASTAPI SERVER STARTED")
-
-# =========================================
-# Global Variables
-# =========================================
-
-faiss_ready = False
 
 # =========================================
 # Request Model
@@ -236,60 +219,19 @@ def home():
     }
 
 # =========================================
-# Health Check Route
+# Health Route
 # =========================================
 
 @app.get("/health")
 def health():
 
     return {
-        "status": "healthy",
-        "faiss_ready": faiss_ready
+        "success": True,
+        "status": "healthy"
     }
 
 # =========================================
-# Refresh Jobs Route
-# =========================================
-
-@app.get("/refresh-jobs")
-def refresh_jobs():
-
-    global faiss_ready
-
-    try:
-
-        print("\n===================================")
-        print("FETCHING LATEST JOBS...")
-        print("===================================")
-
-        # Scrape latest jobs
-        scrape_all_jobs()
-
-        print("\n===================================")
-        print("BUILDING FAISS DATABASE...")
-        print("===================================")
-
-        # Rebuild FAISS
-        load_jobs()
-
-        faiss_ready = True
-
-        return {
-            "success": True,
-            "message": "Jobs refreshed successfully"
-        }
-
-    except Exception as e:
-
-        traceback.print_exc()
-
-        return {
-            "success": False,
-            "error": str(e)
-        }
-
-# =========================================
-# Match Jobs Route
+# Match Route
 # =========================================
 
 @app.post("/match")
@@ -297,10 +239,17 @@ def match_jobs(request: ResumeRequest):
 
     try:
 
+        print("\n======================")
         print("MATCH REQUEST RECEIVED")
+        print("======================")
+
+        print(
+            "Resume Length:",
+            len(request.resume)
+        )
 
         # =====================================
-        # TEMP STATIC RESULTS
+        # STATIC TEST DATA
         # =====================================
 
         matches = [
@@ -320,8 +269,8 @@ def match_jobs(request: ResumeRequest):
 
                 "reasoning": (
                     "Your resume strongly matches "
-                    "Python, FastAPI, AI, "
-                    "machine learning, and NLP skills."
+                    "Python, AI, FastAPI, "
+                    "Machine Learning, and NLP skills."
                 )
             },
 
@@ -339,9 +288,9 @@ def match_jobs(request: ResumeRequest):
                 "match_percentage": 91,
 
                 "reasoning": (
-                    "Your background aligns with "
-                    "AI engineering and backend "
-                    "development requirements."
+                    "Your profile aligns with "
+                    "backend AI engineering "
+                    "and semantic search systems."
                 )
             }
         ]
