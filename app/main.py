@@ -26,25 +26,25 @@ app = FastAPI()
 # Initial Job Scraping
 # =========================================
 
-#print("\nFetching latest jobs...")
+print("\nFetching latest jobs...")
 
-#scrape_all_jobs()
+scrape_all_jobs()
 
 # =========================================
 # Build Initial FAISS Database
 # =========================================
 
-#print("\nBuilding FAISS database...")
+print("\nBuilding FAISS database...")
 
-#load_jobs()
+load_jobs()
 
 # =========================================
 # Start Background Scheduler
 # =========================================
 
-#print("\nStarting job refresh scheduler...")
+print("\nStarting job refresh scheduler...")
 
-#start_scheduler()
+start_scheduler()
 
 # =========================================
 # Request Model
