@@ -26,7 +26,7 @@ app = FastAPI()
 # Initial Job Scraping
 # =========================================
 
-print("\nFetching latest jobs...")
+#print("\nFetching latest jobs...")
 
 #scrape_all_jobs()
 
@@ -176,3 +176,9 @@ def match_jobs(
 
             "error": str(e)
         }
+        
+        
+        
+@app.get("/")
+def home():
+    return {"message": "Railway backend working"}
