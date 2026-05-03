@@ -295,19 +295,23 @@ def refresh_jobs():
 @app.post("/match")
 def match_jobs(request: ResumeRequest):
 
-    global faiss_ready
-
     try:
 
+        print("\n========================")
+        print("MATCH REQUEST RECEIVED")
+        print("========================")
+
+        print("Resume Length:", len(request.resume))
+
         # =====================================
-        # Lazy Load FAISS
+        # Load jobs if needed
         # =====================================
+
+        global faiss_ready
 
         if not faiss_ready:
 
-            print("\n===================================")
-            print("FIRST REQUEST → LOADING JOBS")
-            print("===================================")
+            print("Loading jobs and FAISS...")
 
             scrape_all_jobs()
 
@@ -319,85 +323,81 @@ def match_jobs(request: ResumeRequest):
         # Retrieve Matching Jobs
         # =====================================
 
-        results = retrieve_jobs(
-            request.resume
-        )
+        print("Retrieving jobs...")
+
+        results = retrieve_jobs(request.resume)
+
+        print("Retrieved Results:", results)
 
         matches = []
 
         # =====================================
-        # Generate AI Reasoning
+        # Process Results
         # =====================================
 
         for item in results:
 
-            job = item.get("job", {})
-
-            score = item.get("score", 0)
-
             try:
 
-                reasoning = generate_reasoning(
-                    request.resume,
-                    job
+                job = item.get("job", {})
+
+                score = item.get("score", 0)
+
+                print("Processing Job:", job)
+
+                try:
+
+                    reasoning = generate_reasoning(
+                        request.resume,
+                        job
+                    )
+
+                except Exception as reason_error:
+
+                    print("Reasoning Error:", str(reason_error))
+
+                    reasoning = "AI reasoning unavailable"
+
+                matches.append({
+
+                    "job_title": job.get(
+                        "title",
+                        "Unknown"
+                    ),
+
+                    "company": job.get(
+                        "company",
+                        "Unknown"
+                    ),
+
+                    "location": job.get(
+                        "location",
+                        "Remote"
+                    ),
+
+                    "source": job.get(
+                        "source",
+                        "Unknown"
+                    ),
+
+                    "job_url": job.get(
+                        "url",
+                        ""
+                    ),
+
+                    "match_percentage": score,
+
+                    "reasoning": reasoning
+                })
+
+            except Exception as item_error:
+
+                print(
+                    "ITEM PROCESSING ERROR:",
+                    str(item_error)
                 )
 
-            except Exception as llm_error:
-
-                reasoning = (
-                    f"Reasoning unavailable: "
-                    f"{str(llm_error)}"
-                )
-
-            print("\n====================")
-            print(
-                f"MATCHED JOB: "
-                f"{job.get('title')}"
-            )
-            print(
-                f"SCORE: {score}%"
-            )
-            print(
-                f"COMPANY: "
-                f"{job.get('company')}"
-            )
-            print("====================")
-
-            matches.append({
-
-                "job_title": job.get(
-                    "title",
-                    "N/A"
-                ),
-
-                "company": job.get(
-                    "company",
-                    "N/A"
-                ),
-
-                "location": job.get(
-                    "location",
-                    "Remote"
-                ),
-
-                "source": job.get(
-                    "source",
-                    "Unknown"
-                ),
-
-                "job_url": job.get(
-                    "url",
-                    ""
-                ),
-
-                "match_percentage": score,
-
-                "reasoning": reasoning
-            })
-
-        # =====================================
-        # Return Response
-        # =====================================
+        print("Final Matches:", matches)
 
         return {
 
@@ -410,7 +410,11 @@ def match_jobs(request: ResumeRequest):
 
     except Exception as e:
 
+        import traceback
+
         traceback.print_exc()
+
+        print("MATCH API ERROR:", str(e))
 
         return {
 
