@@ -68,3 +68,122 @@ Exposure to AI workflows matches role requirements
 ## 🛠️ Setup Instructions
 
 ```bash
+# Setup Instructions
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Mini_jobright.git
+
+cd Mini_jobright
+```
+
+---
+
+## 2. Create Virtual Environment
+
+### Windows
+
+```bash
+python -m venv venv
+
+venv\Scripts\activate
+```
+
+### Mac/Linux
+
+```bash
+python3 -m venv venv
+
+source venv/bin/activate
+```
+
+---
+
+## 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Run the Project
+
+## Start FastAPI Backend
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+Backend URL:
+
+```bash
+http://127.0.0.1:8000
+```
+
+---
+
+## Start Streamlit Frontend
+
+Open a new terminal and run:
+
+```bash
+streamlit run ui/streamlit_app.py
+```
+
+Frontend URL:
+
+```bash
+http://localhost:8501
+```
+
+---
+
+# Project Workflow
+
+1. User enters resume text
+2. Backend converts resume into embeddings
+3. FAISS performs vector similarity search
+4. System finds best matching jobs
+5. AI returns matching score and fit explanation
+
+---
+
+# Technologies Used
+
+* Python
+* FastAPI
+* Streamlit
+* Sentence Transformers
+* FAISS
+* Pandas
+* NumPy
+
+---
+
+# Current Status
+
+✅ Localhost working version completed
+
+❌ No deployment yet
+
+Currently NOT deployed on:
+
+* Render
+* Railway
+* GCP
+* AWS
+* Azure
+
+---
+
+# Future Improvements
+
+* Cloud Deployment
+* Docker Support
+* Authentication
+* Pinecone Integration
+* Real-time Job Scraping
+* RAG Pipeline
+* LLM-based Reasoning
