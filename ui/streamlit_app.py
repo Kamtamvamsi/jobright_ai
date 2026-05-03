@@ -141,7 +141,7 @@ if st.button("🔍 Match Jobs"):
             ):
 
                 response = requests.post(
-                    "https://mini-jobright-ai.onrender.com/match",
+                    "http://localhost:8000/match",
                     json={
                         "resume": resume_text
                     },
