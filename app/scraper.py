@@ -1,3 +1,5 @@
+from sys import exception
+
 import requests
 import json
 
@@ -45,38 +47,74 @@ def fetch_remoteok_jobs():
 # Fetch Jobs from Arbeitnow
 # =========================================
 
-def fetch_arbeitnow_jobs():
+def fetch_remoteok_jobs():
+    url = "https://remoteok.com/api"
 
-    url = "https://www.arbeitnow.com/api/job-board-api"
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
 
-    response = requests.get(
-        url,
-        timeout=20
-    )
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
 
-    data = response.json()
+        if response.status_code != 200:
+            print("Failed:", response.status_code)
+            return []
 
-    jobs = []
+        data = response.json()
 
-    for item in data["data"]:
+        jobs = []
 
-        try:
+        for job in data[1:]:
+            jobs.append({
+                "title": job.get("position"),
+                "company": job.get("company"),
+                "description": job.get("description", "")
+            })
 
-            job = {
-                "title": item.get("title", ""),
-                "company": item.get("company_name", ""),
-                "description": item.get("description", "")[:2000],
-                "location": item.get("location", ""),
-                "source": "Arbeitnow",
-                "url": item.get("url", "")
-            }
+        return jobs
 
-            jobs.append(job)
+    except Exception as e:
+        print("Scraping error:", e)
+        return []
 
-        except Exception:
-            pass
+# def fetch_arbeitnow_jobs():
 
-    return jobs
+#     url = "https://www.arbeitnow.com/api/job-board-api"
+
+#     response = requests.get(
+#         url,
+#         timeout=20
+#     )
+
+#     d#ata = response.json()
+#     try: 
+#         data = response.json()
+#     except exception as et:
+#         print("remoteok API failed : ", et)
+#         return[]
+
+#     jobs = []
+
+#     for item in data["data"]:
+
+#         try:
+
+#             job = {
+#                 "title": item.get("title", ""),
+#                 "company": item.get("company_name", ""),
+#                 "description": item.get("description", "")[:2000],
+#                 "location": item.get("location", ""),
+#                 "source": "Arbeitnow",
+#                 "url": item.get("url", "")
+#             }
+
+#             jobs.append(job)
+
+#         except Exception:
+#             pass
+
+#     return jobs
 
 # =========================================
 # Clean Jobs

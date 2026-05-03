@@ -26,7 +26,7 @@ app = FastAPI()
 
 print("\nFetching latest jobs...")
 
-scrape_all_jobs()
+#scrape_all_jobs()
 
 # =========================================
 # Build Initial FAISS Database
