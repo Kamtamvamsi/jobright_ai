@@ -1,6 +1,6 @@
 # 🚀 AI Job Matching Agent (RAG + LLM + FastAPI)
 
-An end-to-end AI-powered job matching system that intelligently connects resumes with relevant job opportunities using semantic search, vector databases, Retrieval-Augmented Generation (RAG), and LLM-based reasoning — inspired by modern AI recruitment platforms like :contentReference[oaicite:0]{index=0}.
+An end-to-end AI-powered job matching system that intelligently connects resumes with relevant job opportunities using semantic search, vector databases, Retrieval-Augmented Generation (RAG), and LLM-based reasoning — inspired by modern AI recruitment platforms like JObright .ai.
 
 ---
 
