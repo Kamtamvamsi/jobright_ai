@@ -163,7 +163,7 @@ graph TD
 # 📁 Project Structure
 
 ```bash
-Mini_jobright/
+jobright/
 │
 ├── backend/
 │   ├── main.py
@@ -224,9 +224,9 @@ flowchart LR
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Mini_jobright.git
+git clone https://github.com/YOUR_USERNAME/jobright.git
 
-cd Mini_jobright
+cd jobright
 ```
 
 ---
@@ -264,7 +264,7 @@ pip install -r requirements.txt
 ## Start FastAPI Backend
 
 ```bash
-uvicorn backend.main:app --reload
+uvicorn app.main:app --reload
 ```
 
 Backend URL:
