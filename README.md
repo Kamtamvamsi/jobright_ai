@@ -1,10 +1,12 @@
 
-![APOS Banner](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=220&section=header&text=APOS&fontSize=50&fontAlignY=38&desc=AI%20Personal%20Operating%20System&descAlignY=60&animation=fadeIn)
+![Jobright Banner](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=220&section=header&text=Jobright&fontSize=55&fontAlignY=38&desc=AI%20Job%20Matching%20System&descAlignY=60&animation=fadeIn)
 
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?size=24&duration=3000&color=36BCF7&center=true&vCenter=true&width=700&lines=Your+AI+Decision+Engine;Not+Just+Tasks+—+A+Thinking+System;Build+Focus+Achieve+Goals" />
+  <img src="https://readme-typing-svg.herokuapp.com?size=24&duration=3000&color=36BCF7&center=true&vCenter=true&width=700&lines=Match+Resumes+with+Jobs+Using+AI;Semantic+Search+%2B+RAG+%2B+LLM;Explainable+Job+Recommendations" />
 </p>
+
 ---
+
 # 🚀 AI Job Matching Agent (RAG + LLM + FastAPI)
 
 An end-to-end AI-powered job matching system that intelligently connects resumes with relevant job opportunities using semantic search, vector databases, Retrieval-Augmented Generation (RAG), and LLM-based reasoning — inspired by modern AI recruitment platforms like Jobright .ai.
